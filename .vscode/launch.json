@@ -1,0 +1,44 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "simplehgn trainer",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/root/autodl-tmp/source/pprogo-flg/trainer/simpleHGN_trainer.py",
+            "console": "integratedTerminal",
+            "args": []
+        }
+
+        {
+            "name": "gin trainer",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/root/autodl-tmp/source/pprogo-flg/trainer/gin_trainer.py",
+            "console": "integratedTerminal",
+            "args": []
+        }
+
+        {
+            "name": "gcn trainer",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/root/autodl-tmp/source/pprogo-flg/trainer/gcn_trainer.py",
+            "console": "integratedTerminal",
+            "args": []
+        }
+
+        {
+            "name": "Python trainer",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/root/autodl-tmp/source/pprogo-flg/trainer/hgat_trainer.py",
+            "console": "integratedTerminal",
+            "args": []
+        }
+    ]
+}
