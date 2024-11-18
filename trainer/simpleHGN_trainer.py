@@ -177,8 +177,8 @@ class GIN_Trainer(object):
                     loss = self.loss_func(pred, label.float())
                     loss_all += loss
                     pred = F.sigmoid(pred)
-                    y_trues.append(label.detach().cpu())
-                    y_predicts.append(pred.detach().cpu())
+                    y_trues.append(label.to(torch.float32).detach().cpu())
+                    y_predicts.append(pred.to(torch.float32).detach().cpu())
                 y_trues = torch.cat(y_trues, dim=0)
                 y_predicts = torch.cat(y_predicts, dim=0)
                 # evaluator = self.task.get_evaluator(name='f1')
@@ -192,9 +192,10 @@ class GIN_Trainer(object):
                         self.best_fmax = fmax
                         self.save_model()
                 elif mode == 'test':
-                    index = self.dataset.test_idx.unsqueeze(1)
-                    results = torch.cat((index.detach().cpu(), y_predicts), dim=1).numpy()
-                    np.savetxt(self.dataset.result_path, results)
+                    # index = self.dataset.test_idx.unsqueeze(1)
+                    # results = torch.cat((index.detach().cpu(), y_predicts), dim=1).numpy()
+                    # np.savetxt(self.dataset.result_path, results)
+                    self.dataset.save_results(y_predicts, y_trues)
                 metric_dict[mode] = (fmax, aupr)
                 loss_dict[mode] = loss
         return metric_dict, loss_dict
@@ -304,8 +305,8 @@ def blocks_to_hetero_graph(blocks):
     return graph_list
 
 args = {'device':torch.device('cuda' if torch.cuda.is_available() else 'cpu'),
-        'model_path':prj_root + '/models/simpleHGN_cc',
-        'dataset_name': 'cc',
+        'model_path':prj_root + '/models/simpleHGN_mf',
+        'dataset_name': 'mf',
         'epoch':50,
         'batch_size':16,
         'patience':10,

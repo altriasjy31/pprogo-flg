@@ -49,6 +49,7 @@ class GCN_Trainer(object):
         stopper = EarlyStopping(self.patience, self.model_path)
 
         for epoch in range(self.epoch):
+            break
             # print('Epoch: {:04d}'.format(epoch+1), end='')
             train_loss = self.train_step(self)
             
@@ -218,7 +219,7 @@ args = {'device':torch.device('cuda' if torch.cuda.is_available() else 'cpu'),
         'model_path':prj_root + '/models/GCN_bp',
         'dataset_name': 'bp',
         'hidden_size': 128,
-        'epoch':2,
+        'epoch':10,
         'batch_size':32,
         'patience':10,
         'lr':0.01,

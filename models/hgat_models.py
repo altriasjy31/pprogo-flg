@@ -23,7 +23,7 @@ class HGAT(nn.Module):
         negative_slope: float
             the negative slope used in the LeakyReLU
 """
-    def __init__(self, ntypes, num_classes, feature_dim, hidden_dim=256, num_layers=1, negative_slope=-0.2, dropout=0.2):
+    def __init__(self, ntypes, num_classes, feature_dim, hidden_dim=128, num_layers=1, negative_slope=0.2, dropout=0.2):
         super(HGAT, self).__init__()
         self.num_layers = num_layers
         self.activation = F.elu

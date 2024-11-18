@@ -48,7 +48,7 @@ class HGAT_Trainer(object):
         self.batch_size = args['batch_size']
         self.patience = args['patience']
         self.loss_fn = nn.BCEWithLogitsLoss()
-        self.scheduler = OneCycleLR(self.optimizer,max_lr=0.05,total_steps=self.epoch*len(self.dataset.train_loader))
+        self.scheduler = OneCycleLR(self.optimizer,max_lr=0.1,total_steps=self.epoch*len(self.dataset.train_loader))
         self.train_idx, self.valid_idx, self.test_idx = self.dataset.train_idx, self.dataset.valid_idx, self.dataset.test_idx
         # self.label = self.dataset.get_label()
         # self.input_feature = self.dataset.input_feature.to(self.device)
@@ -87,11 +87,11 @@ class HGAT_Trainer(object):
         # stopper.load_model(self.model)
         modes = ['test']
         metric_dict, losses = self.test_step(modes=modes)
-        for key in metric_dict:
-            print(metric_dict[key] + losses[key].cpu())
+        # for key in metric_dict:
+        #     print(metric_dict[key] + losses[key].cpu())
             
                 
-    def train_step(self,logits=None):
+    def train_step(self, logits=None):
             # return self._full_train_step()
             self.model.train()
             scaler = GradScaler()
@@ -182,8 +182,8 @@ class HGAT_Trainer(object):
                         loss = self.loss_fn(pred, label.float())
                         loss_all += loss
                         pred = F.sigmoid(pred)
-                        y_trues.append(label.to(torch.float16).detach().cpu())
-                        y_predicts.append(pred.to(torch.float16).detach().cpu())    
+                        y_trues.append(label.to(torch.float32).detach().cpu())
+                        y_predicts.append(pred.to(torch.float32).detach().cpu())    
                 y_trues = torch.cat(y_trues, dim=0)
                 y_predicts = torch.cat(y_predicts, dim=0)
                 # evaluator = self.task.get_evaluator(name='f1')
@@ -196,10 +196,10 @@ class HGAT_Trainer(object):
                         self.best_fmax = fmax
                         self.save_model()
                 elif mode == 'test':
-                    index = self.dataset.test_idx.unsqueeze(1)
-                    results = torch.cat((index.detach().cpu(), y_predicts), dim=1).numpy()
-                    np.savetxt(self.dataset.result_path, results)
-                    
+                    # index = self.dataset.test_idx.unsqueeze(1)
+                    # results = torch.cat((index.detach().cpu(), y_predicts), dim=1).numpy()
+                    # np.savetxt(self.dataset.result_path, results)
+                    self.dataset.save_results(y_predicts, y_trues)
                 # metric_dict[mode] = self.calculate_metrics(y_trues, y_predicts.argmax(dim=1).to('cpu'))
                 metric_dict[mode] = (fmax, aupr)
                 loss_dict[mode] = loss
@@ -312,7 +312,7 @@ def blocks_to_hetero_graph(blocks):
 args = {'device':torch.device('cuda' if torch.cuda.is_available() else 'cpu'),
         'dataset_name': 'bp',
         'model_path':prj_root + '/models/hgat' + '_bp',
-        'epoch':10,
+        'epoch':20,
         'batch_size':16,
         'patience':10,
         'lr':0.01,

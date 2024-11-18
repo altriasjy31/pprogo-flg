@@ -174,8 +174,8 @@ class GIN_Trainer(object):
                     loss = self.loss_func(pred, label.float())
                     loss_all += loss
                     pred = F.sigmoid(pred)
-                    y_trues.append(label.to(torch.float16).detach().cpu())
-                    y_predicts.append(pred.to(torch.float16).detach().cpu())
+                    y_trues.append(label.to(torch.float32).detach().cpu())
+                    y_predicts.append(pred.to(torch.float32).detach().cpu())
                 y_trues = torch.cat(y_trues, dim=0)
                 y_predicts = torch.cat(y_predicts, dim=0)
                 # evaluator = self.task.get_evaluator(name='f1')
