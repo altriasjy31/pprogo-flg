@@ -6,6 +6,15 @@
     "configurations": [
 
         {
+            "name":  "gcn_hg trainer",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/root/autodl-tmp/source/pprogo-flg/trainer/gcn_hg_trainer.py",
+            "console": "integratedTerminal",
+            "args": []
+        }
+
+        {
             "name":  "inductive learning test",
             "type": "debugpy",
             "request": "launch",

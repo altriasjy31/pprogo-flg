@@ -52,9 +52,14 @@ class GCN(nn.Module):
         nn.init.xavier_uniform_(self.output.weight)
         for ppi_linear in self.ppi_linears:
             nn.init.xavier_uniform_(ppi_linear.weight)
+            
+    def l2_norm(self, x):
+        # This is an equivalent replacement for tf.l2_normalize, see https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/math/l2_normalize for more information.
+        return x / (torch.max(torch.norm(x, dim=1, keepdim=True), self.epsilon))
         
     def forward(self, blocks, inputs):
-        h = self.dropout(F.relu(self.input(inputs) + self.input_bias))
+        # h = self.dropout(F.relu(self.input(inputs) + self.input_bias))
+        h = self.dropout(self.l2_norm(self.input(inputs) + self.input_bias))
         # h = self.dropout(F.relu(self.input(blocks[0].srcdata['h']) + self.input_bias))
         blocks[0].srcdata['h'] = h
         for i, ppi_linear in enumerate(self.ppi_linears):

@@ -33,8 +33,7 @@ class GCN_Trainer(object):
         self.model = GCN(self.dataset.feature_dim, labels_num=self.dataset.go_num, hidden_size=args['hidden_size'])
         self.model = self.model.to(self.device)
         self.model_path = args['model_path']
-        self.optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.lr)
-        self.scaler = GradScaler()
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
         # self.loss_func = nn.BCELoss()
         self.loss_func = torch.nn.BCEWithLogitsLoss()
         self.best_fmax = 0
@@ -49,7 +48,6 @@ class GCN_Trainer(object):
         stopper = EarlyStopping(self.patience, self.model_path)
 
         for epoch in range(self.epoch):
-            break
             # print('Epoch: {:04d}'.format(epoch+1), end='')
             train_loss = self.train_step(self)
             
@@ -77,8 +75,8 @@ class GCN_Trainer(object):
             loss_all = 0.0
             loader_tqdm = tqdm(self.dataset.train_loader, ncols=120)
             for i, (input_nodes, output_nodes, blocks) in enumerate(loader_tqdm):
-                # pred = self.model(blocks, blocks[0].srcdata['h'])
                 pred = self.model(blocks, blocks[0].srcdata['h'])
+                # pred = self.model(blocks, blocks[0].srcdata['h'])
                 labels = self.dataset.get_label(output_nodes.tolist())
                 labels = torch.tensor(labels).to(self.device)
                 loss = self.loss_func(pred, labels.float())
@@ -91,7 +89,6 @@ class GCN_Trainer(object):
                 self.optimizer.zero_grad()
                 
                 self.scheduler.step()
-                del blocks
 
             loss_all = loss_all / (i+1)
             return loss_all
@@ -117,8 +114,7 @@ class GCN_Trainer(object):
                 labels = self.dataset.get_label(output_nodes.tolist())
                 labels = torch.tensor(labels).to(self.device)
                 with autocast():
-                    input_features = blocks[0].srcdata['h']
-                    pred = self.model(blocks, input_features)
+                    pred = self.model(blocks, blocks[0].srcdata['h'])
                     loss = self.loss_func(pred, labels.float())
                     loss_all += loss
                     pred = F.sigmoid(pred)
@@ -216,13 +212,13 @@ class GCN_Trainer(object):
     
     
 args = {'device':torch.device('cuda' if torch.cuda.is_available() else 'cpu'),
-        'model_path':prj_root + '/models/GCN_bp',
-        'dataset_name': 'bp',
+        'model_path':prj_root + '/models/GCN_cc',
+        'dataset_name': 'cc',
         'hidden_size': 128,
         'epoch':10,
         'batch_size':32,
         'patience':10,
-        'lr':0.01,
+        'lr':0.001,
         'weight_decay':5e-4}
 
 GCN_Trainer = GCN_Trainer(args=args)
