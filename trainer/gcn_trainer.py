@@ -5,8 +5,10 @@ prj_root = str(P.Path(__file__).parent.parent)
 if prj_root not in sys.path:
     sys.path.append(prj_root)
 from util.utils import EarlyStopping
-from models.GCN import *
-from dataset.gcn_dataset import *
+# from models.GCN import *
+from models.GCN_hg import *
+# from dataset.gcn_dataset import *
+from dataset.hg_dataset import *
 import dgl
 import torch
 from torch.cuda.amp import autocast, GradScaler
@@ -28,9 +30,13 @@ class GCN_Trainer(object):
         self.lr = args['lr']
         self.weight_decay = args['weight_decay']
         self.device = args['device']
-        self.dataset = GCN_Dataset('data', args['dataset_name'], args['batch_size'], 2, self.device)
-        self.g = self.dataset.ppi.to(self.device)
-        self.model = GCN(self.dataset.feature_dim, labels_num=self.dataset.go_num, hidden_size=args['hidden_size'])
+        # self.dataset = GCN_Dataset('data', args['dataset_name'], args['batch_size'], self.device)
+        self.dataset = DBLPDataset('data', args['dataset_name'], 'GCN', args['batch_size'], self.device)
+        self.g = self.dataset.g.to(self.device)
+        self.g = dgl.node_subgraph(self.g, {'protein':torch.arange(self.dataset.protein_num)})
+        # self.model = GCN(self.dataset.feature_dim, labels_num=self.dataset.go_num, hidden_size=args['hidden_size'])
+        self.ppi_etype = ['interacts_0', '_interacts_0']
+        self.model = RGCN(in_dim=self.dataset.feature_dim, hidden_dim=128, out_dim=self.dataset.go_num, etypes=self.ppi_etype, num_bases=2)
         self.model = self.model.to(self.device)
         self.model_path = args['model_path']
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
@@ -212,8 +218,8 @@ class GCN_Trainer(object):
     
     
 args = {'device':torch.device('cuda' if torch.cuda.is_available() else 'cpu'),
-        'model_path':prj_root + '/models/GCN_cc',
-        'dataset_name': 'cc',
+        'model_path':prj_root + '/models/gcn_bp',
+        'dataset_name': 'bp',
         'hidden_size': 128,
         'epoch':10,
         'batch_size':32,

@@ -1,34 +1,10 @@
 import dgl
 import torch
-import torch.nn.functional as F
-
-
-# class GCN(torch.nn.Module):
-#     def __init__(self, input_features, hidden_size, num_classes, dropout=0.5, num_gcn=0):
-#         super().__init__()
-#         self.dropout = torch.nn.Dropout(dropout)
-#         self.num_gcn = num_gcn
-#         self.input_layer = torch.nn.Linear(input_features, hidden_size)
-#         self.conv1 = dgl.nn.GraphConv(hidden_size, hidden_size)
-#         self.conv2 = dgl.nn.GraphConv(hidden_size, hidden_size)
-#         self.output_layer = torch.nn.Linear(hidden_size, num_classes)
-#         self.input_bias = torch.nn.Parameter(torch.zeros(hidden_size))
-#         torch.nn.init.xavier_uniform_(self.input_layer.weight)
-#         torch.nn.init.xavier_uniform_(self.output_layer.weight)
-        
-        
-#     def forward(self, blocks, x):
-#         outputs = self.dropout(F.relu(self.input_layer(x)) + self.input_bias)
-#         outputs = self.conv1(blocks[0], outputs)
-#         outputs = self.conv2(blocks[1], outputs)
-#         outputs = self.output_layer(outputs)
-#         return outputs
-
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import dgl
 from dgl.nn import GraphConv
+
 
 class GCN(nn.Module):
 

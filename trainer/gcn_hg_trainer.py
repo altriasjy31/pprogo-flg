@@ -48,7 +48,7 @@ class HGAT_Trainer(object):
         self.batch_size = args['batch_size']
         self.patience = args['patience']
         self.loss_fn = nn.BCEWithLogitsLoss()
-        self.scheduler = OneCycleLR(self.optimizer,max_lr=0.005,total_steps=self.epoch*len(self.dataset.train_loader))
+        self.scheduler = OneCycleLR(self.optimizer,max_lr=0.001,total_steps=self.epoch*len(self.dataset.train_loader))
         self.train_idx, self.valid_idx, self.test_idx = self.dataset.train_idx, self.dataset.valid_idx, self.dataset.test_idx
         # self.label = self.dataset.get_label()
         # self.input_feature = self.dataset.input_feature.to(self.device)
@@ -283,12 +283,12 @@ def get_nodes_dict(hg):
 
 
 args = {'device':torch.device('cuda' if torch.cuda.is_available() else 'cpu'),
-        'dataset_name': 'bp',
-        'model_path':prj_root + '/models/gcn_hg' + '_bp',
+        'dataset_name': 'mf',
+        'model_path':prj_root + '/models/gcn_hg' + '_mf',
         'epoch':20,
         'batch_size':16,
         'patience':10,
-        'lr':0.001,
+        'lr':0.0001,
         'weight_decay':5e-4}
 
 HGAT_Trainer = HGAT_Trainer(args=args)

@@ -310,8 +310,8 @@ def blocks_to_hetero_graph(blocks):
     return graph_list
 
 args = {'device':torch.device('cuda' if torch.cuda.is_available() else 'cpu'),
-        'dataset_name': 'mf',
-        'model_path':prj_root + '/models/hgat' + '_mf',
+        'dataset_name': 'bp',
+        'model_path':prj_root + '/models/hgat_hansampler' + '_bp',
         'epoch':20,
         'batch_size':16,
         'patience':10,
